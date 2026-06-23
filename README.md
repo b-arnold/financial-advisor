@@ -18,6 +18,32 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Supabase
+
+This project is wired up to [Supabase](https://supabase.com) for auth and data.
+
+1. Copy the env template and fill in your project's values from
+   **Project Settings → API** in the Supabase dashboard:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+2. Use the right client for the right place:
+
+   - **Client Components** — `import { createClient } from "@/lib/supabase/client"`
+   - **Server Components / Route Handlers / Server Functions** —
+     `import { createClient } from "@/lib/supabase/server"` (this one is `async`)
+
+   `proxy.ts` (the Next.js 16 rename of Middleware) refreshes the auth session
+   on every request via `lib/supabase/proxy.ts`. Route-gating is stubbed out
+   there with a commented example, ready to enable when you add auth.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
