@@ -1,26 +1,277 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Literal family names — @theme inline resolves at parse time, so a
+     var(--font-sans) self-reference (or a runtime next/font var) would break. */
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-heading: "Newsreader", Georgia, serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-soft: var(--brand-accent-soft);
+  --color-brand-warm: var(--brand-warm);
+  --color-brand-warm-soft: var(--brand-warm-soft);
+  --color-brand-green: var(--brand-green);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-amber: var(--brand-amber);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-blue: var(--brand-blue);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The command-center components reference the design's literal font names
+   ('Geist', 'Newsreader'). Those families are loaded by name via a Google Fonts
+   stylesheet in the root layout, so the inline styles resolve directly. */
+:where(body) {
+  font-family: "Geist", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbars for the in-app scroll regions (mobile frame, modals, chip rows). */
+.appscroll::-webkit-scrollbar {
+  display: none;
+}
+.appscroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Animations used by the mobile chrome and modals. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@keyframes bannerIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes msgIn {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Northstar warm "paper" palette, ported from lib/theme.ts into shadcn roles.
+   Surface tokens map: bg→background, bgRaised→card/popover, bgSunken→secondary/
+   muted/accent, ink→foreground, accent (#6d5bd0)→primary, warm (#c2705a)→
+   destructive. The literal accent palette (warm/green/teal/...) is exposed as
+   --brand-* so screens can reference category/debt/fund colors via Tailwind.
+--------------------------------------------------------------------------- */
+:root {
+  --background: #f6f1e9;
+  --foreground: #2c2722;
+  --card: #fffefb;
+  --card-foreground: #2c2722;
+  --popover: #fffefb;
+  --popover-foreground: #2c2722;
+  --primary: #6d5bd0;
+  --primary-foreground: #ffffff;
+  --secondary: #faf6ef;
+  --secondary-foreground: #3a342d;
+  --muted: #faf6ef;
+  --muted-foreground: #6f675c;
+  --accent: #faf6ef;
+  --accent-foreground: #3a342d;
+  --destructive: #c2705a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(44, 39, 34, 0.08);
+  --input: rgba(44, 39, 34, 0.12);
+  --ring: #6d5bd0;
+
+  /* Brand accent palette (rotating category / debt / fund colors). */
+  --brand-accent: #6d5bd0;
+  --brand-accent-soft: #8b7bea;
+  --brand-warm: #c2705a;
+  --brand-warm-soft: #e0a273;
+  --brand-green: #2f8f6b;
+  --brand-teal: #1f9e8a;
+  --brand-amber: #b07d22;
+  --brand-gold: #8a7a3e;
+  --brand-blue: #3a6ea5;
+
+  --chart-1: #6d5bd0;
+  --chart-2: #c2705a;
+  --chart-3: #2f8f6b;
+  --chart-4: #3a6ea5;
+  --chart-5: #b07d22;
+
+  --radius: 1.125rem; /* 18px — the design's card radius */
+
+  --sidebar: #faf6ef;
+  --sidebar-foreground: #2c2722;
+  --sidebar-primary: #6d5bd0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fffefb;
+  --sidebar-accent-foreground: #3a342d;
+  --sidebar-border: rgba(44, 39, 34, 0.08);
+  --sidebar-ring: #6d5bd0;
+}
+
+.dark {
+  --background: #17140e;
+  --foreground: #ece7df;
+  --card: #221d17;
+  --card-foreground: #ece7df;
+  --popover: #221d17;
+  --popover-foreground: #ece7df;
+  --primary: #8b7bea;
+  --primary-foreground: #17140e;
+  --secondary: #2b251d;
+  --secondary-foreground: #e0dace;
+  --muted: #2b251d;
+  --muted-foreground: #b7afa2;
+  --accent: #2b251d;
+  --accent-foreground: #e0dace;
+  --destructive: #c2705a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.13);
+  --ring: #8b7bea;
+
+  --brand-accent: #8b7bea;
+  --brand-accent-soft: #8b7bea;
+  --brand-warm: #c2705a;
+  --brand-warm-soft: #e0a273;
+  --brand-green: #2f8f6b;
+  --brand-teal: #1f9e8a;
+  --brand-amber: #b07d22;
+  --brand-gold: #8a7a3e;
+  --brand-blue: #3a6ea5;
+
+  --chart-1: #8b7bea;
+  --chart-2: #c2705a;
+  --chart-3: #2f8f6b;
+  --chart-4: #3a6ea5;
+  --chart-5: #b07d22;
+
+  --sidebar: #221d17;
+  --sidebar-foreground: #ece7df;
+  --sidebar-primary: #8b7bea;
+  --sidebar-primary-foreground: #17140e;
+  --sidebar-accent: #2b251d;
+  --sidebar-accent-foreground: #e0dace;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b7bea;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

@@ -2,5 +2,5 @@
 import Screen from "@/components/features/shell/Screen";
 
 export default function Page() {
-  return <Screen id="today" />;
+  return <Screen id="debt" />;
 }
