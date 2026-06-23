@@ -5,9 +5,10 @@
 // prefixed with `NEXT_PUBLIC_` so Next.js inlines them into the client bundle —
 // see node_modules/next/dist/docs/01-app/02-guides/environment-variables.md.
 import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "./database.types";
 
 export function createClient() {
-  return createBrowserClient(
+  return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
