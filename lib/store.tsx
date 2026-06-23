@@ -46,7 +46,7 @@ export type Modal =
   | { kind: "member"; memberId?: string };
 
 // ---- reducer -----------------------------------------------------------------
-type Action =
+export type Action =
   | { t: "set"; patch: Partial<State> }
   | { t: "upsertCategory"; v: Category }
   | { t: "deleteCategory"; id: string }
@@ -82,7 +82,7 @@ const upsert = <T extends { id: string }>(list: T[], v: T) => {
   return next;
 };
 
-function reducer(s: State, a: Action): State {
+export function reducer(s: State, a: Action): State {
   switch (a.t) {
     case "set":
       return { ...s, ...a.patch };
